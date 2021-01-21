@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   SafeAreaView,
@@ -10,26 +10,47 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import api from './services/api';
+
 export default function App() {
-  async function handleLikeRepository(id) {
-    // Implement "Like Repository" functionality
-  }
+
+  const [repositories, setRepositories] = useState([]);
+
+  useEffect(() => {
+    api.get('repositories').then(response => {
+      console.log(response.data);
+      setRepositories(response.data);
+    });
+  }, []);
+
+  // async function handleLikeRepository(id) {
+
+  // }
 
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <SafeAreaView style={styles.container}>
-        <View style={styles.repositoryContainer}>
-          <Text style={styles.repository}>Repository 1</Text>
 
-          <View style={styles.techsContainer}>
-            <Text style={styles.tech}>
-              ReactJS
-            </Text>
-            <Text style={styles.tech}>
-              Node.js
-            </Text>
-          </View>
+        <View style={styles.repositoryContainer}>
+
+          <FlatList
+            data={repositories}
+            keyExtractor={repositorie => repositorie.id}
+            renderItem={({ item: repositorie }) => (
+              <>
+                <Text style={styles.repository}>{repositorie.title}</Text>
+                <View style={styles.techsContainer}>
+                <FlatList 
+                data={repositories}
+                keyExtractor={repositorie => repositorie.id}
+                renderItem={({ item: techs, index }) => (<Text style={styles.tech}>{repositorie.techs[index]}</Text>)}
+                />
+                </View>
+              </>
+            )}
+          />
+
 
           <View style={styles.likesContainer}>
             <Text
